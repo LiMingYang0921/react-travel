@@ -4,30 +4,16 @@ import { Layout, Typography, Input, Menu, Button, Dropdown } from 'antd'
 import { GlobalOutlined } from '@ant-design/icons'
 import logo from '../../assets/logo.svg';
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { useSelector } from "../../redux/hooks";
-import { useDispatch } from "react-redux";
-import { addLanguageActionCreator, changeLanguageActionCreator } from "../../redux/languageActions";
-// import { useTranslation } from "react-i18next";
 
 export const Header: React.FC = () => {
+  const languageList = [
+    { key: '1', label: '中文' },
+    { key: '2', label: 'English' }
+  ]
 
   const navigate = useNavigate()
-  // const location = useLocation()
-  // const params = useParams()
-  const language = useSelector((state) => state.language);
-  const languageList = useSelector((state) => state.languageList);
-  const dispatch = useDispatch()
-  // const { t } = useTranslation()
-
-  const menuClickHandler = (e) => {
-    console.log(e);
-    if (e.key === "new") {
-      // 处理新语言添加action
-      dispatch(addLanguageActionCreator("新语言", "new_lang"));
-    } else {
-      dispatch(changeLanguageActionCreator(e.key));
-    }
-  };
+  const location = useLocation()
+  const params = useParams()
 
   return (
     <div className={styles['app-header']}>
@@ -37,21 +23,12 @@ export const Header: React.FC = () => {
             让旅游更幸福
           </Typography.Text>
           <Dropdown.Button
-            style={{ marginLeft: 15 }}
             overlay={
-              <Menu
-                onClick={menuClickHandler}
-                items={[
-                  ...languageList.map((l) => {
-                    return { key: l.code, label: l.name };
-                  }),
-                  { key: "new", label: '嘿嘿嘿' },
-                ]}
-              />
+              <Menu items={languageList} />
             }
             icon={<GlobalOutlined />}
           >
-            {language === "zh" ? "中文" : "English"}
+            语言
           </Dropdown.Button>
         </div>
         <Button.Group>
