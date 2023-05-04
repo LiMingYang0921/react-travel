@@ -4,22 +4,17 @@ import logo from "../../assets/logo.svg";
 import { Layout, Typography, Input, Menu, Button, Dropdown } from "antd"
 import { GlobalOutlined } from "@ant-design/icons"
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import store from '../../redux/store'
 
 export const Header: React.FC = () => {
+  const storeState = store.getState()
+  console.log('storeState', storeState);
   const params = useParams()
   const location = useLocation()
   const navigate = useNavigate()
 
-  const dropdownItems = [
-    {
-      key: '1',
-      label: <span>中文</span>,
-    },
-    {
-      key: '2',
-      label: <span>English</span>,
-    }
-  ]
+  const dropdownItems = storeState.languageList
+  const language = storeState.language
   const menuItems = [
     { key: '1', label: '旅游首页' },
     { key: '2', label: '周末游' },
@@ -45,10 +40,12 @@ export const Header: React.FC = () => {
           <Typography.Text>让旅游更幸福</Typography.Text>
           <Dropdown.Button
             style={{ marginLeft: 15, flex: 1 }}
-            menu={{ items: dropdownItems }}
+            overlay={<Menu items={dropdownItems.map((item) => {
+              return { key: item.code, label: item.name }
+            })} />}
             icon={<GlobalOutlined />}
           >
-            语言
+            {dropdownItems.find(item => item.code === language)?.name}
           </Dropdown.Button>
           <Button.Group className={styles["button-group"]}>
             <Button onClick={() => navigate('/register')}>注册</Button>
