@@ -11,6 +11,16 @@ const defaultState: LanguageState = {
   ]
 }
 
-export default (state = defaultState, action) => {
+const reducer = (state = defaultState, action) => {
+  if (action.type === 'change_language') {
+    const newState = { ...state, language: action.payload }
+    return newState
+  }
+  if (action.type === 'add_language') {
+    const newState = { ...state, languageList: [...state.languageList, action.payload] }
+    return newState
+  }
   return state
 }
+
+export default reducer

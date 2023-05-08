@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './Header.module.css'
 import logo from "../../assets/logo.svg";
 import { Layout, Typography, Input, Menu, Button, Dropdown } from "antd"
@@ -6,15 +6,52 @@ import { GlobalOutlined } from "@ant-design/icons"
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import store from '../../redux/store'
 
+
+
 export const Header: React.FC = () => {
   const storeState = store.getState()
-  console.log('storeState', storeState);
   const params = useParams()
   const location = useLocation()
   const navigate = useNavigate()
 
-  const dropdownItems = storeState.languageList
-  const language = storeState.language
+  const [language, setLanguage] = useState(storeState.language)
+  const [languageList, setLanguageList] = useState(storeState.languageList)
+
+  store.subscribe(() => {
+    const storeState = store.getState()
+    setLanguage(storeState.language)
+    setLanguageList(storeState.languageList)
+  })
+
+  const languageChangeClick = (e) => {
+    if (e.key === 'new') {
+      const action = {
+        type: 'add_language',
+        payload: {
+          code: `new_lang${storeState.languageList.length - 1}`,
+          name: `新语言${storeState.languageList.length - 1}`
+        },
+      }
+      store.dispatch(action)
+    } else {
+      const action = {
+        type: 'change_language',
+        payload: e.key,
+      }
+      store.dispatch(action)
+    }
+  }
+
+  let dropdownItems = storeState.languageList.map((item) => {
+    return { key: item.code, label: item.name }
+  })
+
+  const menuProps = {
+    items: [...dropdownItems, { key: 'new', label: '添加新语音' }],
+    onClick: languageChangeClick,
+  };
+
+
   const menuItems = [
     { key: '1', label: '旅游首页' },
     { key: '2', label: '周末游' },
@@ -40,12 +77,10 @@ export const Header: React.FC = () => {
           <Typography.Text>让旅游更幸福</Typography.Text>
           <Dropdown.Button
             style={{ marginLeft: 15, flex: 1 }}
-            overlay={<Menu items={dropdownItems.map((item) => {
-              return { key: item.code, label: item.name }
-            })} />}
+            menu={menuProps}
             icon={<GlobalOutlined />}
           >
-            {dropdownItems.find(item => item.code === language)?.name}
+            {dropdownItems.find(item => item.key === language)?.label}
           </Dropdown.Button>
           <Button.Group className={styles["button-group"]}>
             <Button onClick={() => navigate('/register')}>注册</Button>
@@ -72,6 +107,6 @@ export const Header: React.FC = () => {
           items={menuItems}
         />
       </div>
-    </div>
+    </div >
   )
 }
