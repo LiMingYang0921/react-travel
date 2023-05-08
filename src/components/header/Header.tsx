@@ -3,15 +3,13 @@ import styles from './Header.module.css'
 import logo from "../../assets/logo.svg";
 import { Layout, Typography, Input, Menu, Button, Dropdown } from "antd"
 import { GlobalOutlined } from "@ant-design/icons"
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import store from '../../redux/store'
 
 
 
 export const Header: React.FC = () => {
   const storeState = store.getState()
-  const params = useParams()
-  const location = useLocation()
   const navigate = useNavigate()
 
   const [language, setLanguage] = useState(storeState.language)
@@ -24,25 +22,26 @@ export const Header: React.FC = () => {
   })
 
   const languageChangeClick = (e) => {
+    let action = { type: '', payload: {} }
     if (e.key === 'new') {
-      const action = {
+      action = {
         type: 'add_language',
         payload: {
-          code: `new_lang${storeState.languageList.length - 1}`,
-          name: `新语言${storeState.languageList.length - 1}`
+          code: `new_lang${languageList.length - 1}`,
+          name: `新语言${languageList.length - 1}`
         },
       }
-      store.dispatch(action)
     } else {
-      const action = {
+      action = {
         type: 'change_language',
         payload: e.key,
       }
-      store.dispatch(action)
+
     }
+    store.dispatch(action)
   }
 
-  let dropdownItems = storeState.languageList.map((item) => {
+  let dropdownItems = languageList.map((item) => {
     return { key: item.code, label: item.name }
   })
 
