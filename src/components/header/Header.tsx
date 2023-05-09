@@ -5,6 +5,7 @@ import { Layout, Typography, Input, Menu, Button, Dropdown } from "antd"
 import { GlobalOutlined } from "@ant-design/icons"
 import { useNavigate } from 'react-router-dom';
 import store from '../../redux/store'
+import { addLanguageActionCreator, changeLanguageActionCreator } from '../../redux/languageReducer'
 
 
 
@@ -22,21 +23,13 @@ export const Header: React.FC = () => {
   })
 
   const languageChangeClick = (e) => {
-    let action = { type: '', payload: {} }
+    let action
     if (e.key === 'new') {
-      action = {
-        type: 'add_language',
-        payload: {
-          code: `new_lang${languageList.length - 1}`,
-          name: `新语言${languageList.length - 1}`
-        },
-      }
+      const name = `新语言${languageList.length - 1}`
+      const code = `new_lang${languageList.length - 1}`
+      action = addLanguageActionCreator(name, code)
     } else {
-      action = {
-        type: 'change_language',
-        payload: e.key,
-      }
-
+      action = changeLanguageActionCreator(e.key)
     }
     store.dispatch(action)
   }
