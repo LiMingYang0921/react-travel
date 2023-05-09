@@ -4,3 +4,11 @@
   margin-right: auto;
   min-height: 75vh;
 }
+
+.example {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
